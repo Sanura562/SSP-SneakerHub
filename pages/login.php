@@ -25,12 +25,13 @@
             </button>
         </form>
         <div class="text-center my-4 text-gray-600">Or</div>
-        <button onclick="window.location.href='signup.php';"
+        <button onclick="window.location.href='register.php';"
             class="w-full bg-gray-300 text-black py-3 rounded-lg hover:bg-gray-400 transition">
             Sign Up
         </button>
         <div class="text-right mt-4">
-            <a onclick="forgetPassword.php" class="text-blue-500 hover:underline">Forgot Password?</a>
+            <a href="forgotPassword.php" class="text-red-500 hover:underline">Forgot
+                Password?</a>
         </div>
 
     </div>
