@@ -13,7 +13,7 @@
         <h1 class="text-2xl font-bold mb-4 text-center">SneakerHub</h1>
         <h2 class="text-xl font-semibold mb-2">Login</h2>
         <p class="text-sm text-gray-600 mb-4">If you are already a member, easily log in now.</p>
-        <form action="login.php" method="POST" class="space-y-4">
+        <form action="Login.php" method="POST" class="space-y-4">
             <input type="email" name="email" placeholder="Email"
                 class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required>
