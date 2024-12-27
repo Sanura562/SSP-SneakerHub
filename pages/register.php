@@ -1,3 +1,48 @@
+<?php
+
+include '../utils/db.php';
+
+
+$error = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $name = htmlspecialchars(trim($_POST['name']));
+    $email = htmlspecialchars(trim($_POST['email']));
+    $password = htmlspecialchars(trim($_POST['password']));
+
+
+    if (empty($name) || empty($email) || empty($password)) {
+        $error = "All fields are required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Invalid email format.";
+    } else {
+
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+
+        try {
+            $conn = dbConnect();
+            $sql = "INSERT INTO user (name, email, password) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('sss', $name, $email, $hashed_password);
+
+            if ($stmt->execute()) {
+                header("Location: login.php?success=Registration successful! You can now log in.");
+                exit;
+            } else {
+                $error = "Error: " . $stmt->error;
+            }
+
+            $stmt->close();
+            $conn->close();
+        } catch (Exception $e) {
+            $error = "Error: " . $e->getMessage();
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,14 +58,9 @@
         <div class="w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
             <h2 class="text-2xl font-bold mb-4 text-center">Register</h2>
 
-            <!-- Display Error or Success Message -->
             <?php if (!empty($error)): ?>
             <div class="bg-red-100 text-red-700 p-3 mb-4 rounded">
-                <?php echo $error; ?>
-            </div>
-            <?php elseif (!empty($success)): ?>
-            <div class="bg-green-100 text-green-700 p-3 mb-4 rounded">
-                <?php echo $success; ?>
+                <?php echo htmlspecialchars($error); ?>
             </div>
             <?php endif; ?>
 
@@ -53,51 +93,5 @@
         </div>
     </div>
 </body>
-<?php
-// Include database connection file
-include '../utils/db.php';
- // Replace with your DB connection file
-
-// Initialize variables for errors
-$error = "";
-$success = "";
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get form data
-    $name = htmlspecialchars(trim($_POST['name']));
-    $email = htmlspecialchars(trim($_POST['email']));
-    $password = htmlspecialchars(trim($_POST['password']));
-
-    // Basic validation
-    if (empty($name) || empty($email) || empty($password)) {
-        $error = "All fields are required.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Invalid email format.";
-    } else {
-        // Hash the password for security
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        // Insert data into the database
-        try {
-            $conn = dbConnect(); // Assuming dbConnect() returns the connection object
-            $sql = "INSERT INTO user (name, email, password) VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('sss', $name, $email, $hashed_password);
-
-            if ($stmt->execute()) {
-                $success = "Registration successful! You can now log in.";
-            } else {
-                $error = "Error: " . $stmt->error;
-            }
-
-            $stmt->close();
-            $conn->close();
-        } catch (Exception $e) {
-            $error = "Error: " . $e->getMessage();
-        }
-    }
-}
-?>
-
 
 </html>

@@ -1,12 +1,15 @@
 <?php
-function dbConnect() {
-    $servername = "localhost"; // Replace with your server details
-    $username = "sneakerhub";        // Replace with your database username
-    $password = "";            // Replace with your database password
-    $dbname = "sneakerhub"; // Replace with your database name
+
+// db.php
+function dbConnect()
+{
+    $host = 'localhost'; // Replace with your database host
+    $username = 'root'; // Replace with your database username
+    $password = 'root'; // Replace with your database password
+    $database = 'sneaker_hub'; // Replace with your database name
 
     // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $conn = new mysqli($host, $username, $password, $database);
 
     // Check connection
     if ($conn->connect_error) {
@@ -15,4 +18,3 @@ function dbConnect() {
 
     return $conn;
 }
-?>

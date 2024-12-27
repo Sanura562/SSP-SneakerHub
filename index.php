@@ -1,6 +1,6 @@
 <?php
 $title = "Home Page"; 
-include './utils/header.php'; 
+include './utils/navbar.php'; 
 ?>
 
 <head>
@@ -19,7 +19,7 @@ include './utils/header.php';
             <p class="mt-4 text-gray-600">Your one-stop shop for sneakers.</p>
         </div>
 
-        <?php include 'footer.php'; ?>
+        <?php include '../SSP/utils/footer.php'; ?>
     </body>
 
     </html>
