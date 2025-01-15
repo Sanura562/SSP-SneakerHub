@@ -1,11 +1,12 @@
 <?php
 session_start();
+include '../utils/db.php';
 
-// Database credentials (replace with your actual database credentials)
+// Database credentials
 $servername = "localhost";
-$username = "root";  // Change this to your DB username
-$password = "root";      // Change this to your DB password
-$dbname = "sneaker_hub";  // Replace with your DB name
+$username = "root"; // Update with your DB username if needed
+$password = "root"; // Update with your DB password if needed
+$dbname = "sneaker_hub";
 
 // Create a connection to the database
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -21,21 +22,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = htmlspecialchars(trim($_POST['password']));
 
     // SQL query to check if the user exists with the entered email
-    $sql = "SELECT * FROM users WHERE email = ?";  // Adjust 'users' table name as necessary
+    $sql = "SELECT * FROM user WHERE email = ?";
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            // User found, verify password
+            // User found, fetch data
             $user = $result->fetch_assoc();
 
-            // Use password_verify if the password is hashed (recommended)
+            // Verify password using password_verify
             if (password_verify($password, $user['password'])) {
                 // Set session variables on successful login
-                $_SESSION['user'] = $user['email'];  // Store email in session or any other user data
-                header("Location: Home.php");  // Redirect to home page
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_email'] = $user['email'];
+
+                // Redirect to the home page
+                header("Location: Home.php");
                 exit();
             } else {
                 // Invalid password
@@ -52,9 +57,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("SQL preparation failed: " . $conn->error);
     }
 }
+if (password_verify($password, $user['password'])) {
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['user_name'] = $user['name'];
+    $_SESSION['user_email'] = $user['email'];
+    $_SESSION['user_role'] = $user['role']; // Store the role in the session
 
+    if ($user['role'] === 'admin') {
+        header("Location: AdminDashboard.php"); // Redirect admin to admin dashboard
+    } else {
+        header("Location: Home.php"); // Redirect regular users to home page
+    }
+    exit();
+}
+// Redirect to the login page with an error message
+
+// Close the database connection
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
