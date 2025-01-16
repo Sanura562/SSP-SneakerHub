@@ -10,9 +10,9 @@
 
         <!-- Navigation Links -->
         <div class="hidden md:flex space-x-4">
-            <a href="index.php" class="hover:text-gray-400">Home</a>
-            <a href="products.php" class="hover:text-gray-400">Products</a>
-            <a href="about.php" class="hover:text-gray-400">About</a>
+            <a href="../pages/Home.php" class="hover:text-gray-400">Home</a>
+            <a href="../pages/products.php" class="hover:text-gray-400">Products</a>
+            <a href="../pages/About.php" class="hover:text-gray-400">About</a>
             <a href="contact.php" class="hover:text-gray-400">Contact</a>
         </div>
 
