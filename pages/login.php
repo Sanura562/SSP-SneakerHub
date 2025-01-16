@@ -38,9 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['name'];
                 $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_role'] = $user['role']; // Assuming 'role' column exists
 
-                // Redirect to the home page
-                header("Location: Home.php");
+                // Redirect based on role
+                if ($user['role'] === 'admin') {
+                    header("Location: adminDash.php"); // Redirect admin
+                } else {
+                    header("Location: Home.php"); // Redirect regular user
+                }
                 exit();
             } else {
                 // Invalid password
@@ -57,24 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("SQL preparation failed: " . $conn->error);
     }
 }
-if (password_verify($password, $user['password'])) {
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['user_name'] = $user['name'];
-    $_SESSION['user_email'] = $user['email'];
-    $_SESSION['user_role'] = $user['role']; // Store the role in the session
-
-    if ($user['role'] === 'admin') {
-        header("Location: AdminDashboard.php"); // Redirect admin to admin dashboard
-    } else {
-        header("Location: Home.php"); // Redirect regular users to home page
-    }
-    exit();
-}
-// Redirect to the login page with an error message
 
 // Close the database connection
 $conn->close();
 ?>
+
 
 
 <!DOCTYPE html>
