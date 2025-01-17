@@ -30,54 +30,77 @@ $recentOrders = [
 </head>
 
 <body class="bg-gray-100">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside class="w-64 bg-blue-800 text-white min-h-screen">
-            <div class="p-4 text-center font-bold text-2xl">
-                Admin Dashboard
-            </div>
-            <nav class="mt-6">
-                <ul>
-                    <li><a href="adminDash.php" class="block p-4 hover:bg-blue-700">Dashboard</a></li>
-                    <li><a href="ManagePrd.php" class="block p-4 hover:bg-blue-700">Manage Products</a></li>
-                    <li><a href="ViewOrders.php" class="block p-4 hover:bg-blue-700">View Orders</a></li>
-                    <li><a href="logout.php" class="block p-4 hover:bg-blue-700">Logout</a></li>
-                </ul>
-            </nav>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 p-6">
-            <h1 class="text-3xl font-bold mb-6">Welcome, Admin</h1>
+    <!-- Header -->
+    <div class="bg-gray-800 text-white py-4 px-6 flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+        <a href="logout.php" class="bg-red-500 px-4 py-2 rounded hover:bg-red-600">Logout</a>
+    </div>
 
-            <!-- Dashboard Stats -->
-            <div class="grid grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-xl font-semibold mb-2">Total Users</h2>
-                    <p class="text-2xl font-bold"><?php echo $totalUsers; ?></p>
+    <div class="container mx-auto py-8 px-6">
+        <!-- Success/Error Messages -->
+        <?php if (isset($success)): ?>
+        <div class="bg-green-100 text-green-700 p-4 rounded mb-4"><?php echo $success; ?></div>
+        <?php endif; ?>
+        <?php if (isset($error)): ?>
+        <div class="bg-red-100 text-red-700 p-4 rounded mb-4"><?php echo $error; ?></div>
+        <?php endif; ?>
+
+        <!-- Add Image Section -->
+        <div class="bg-white p-6 rounded-lg shadow mb-8">
+            <h2 class="text-xl font-bold mb-4">Add Image</h2>
+            <form action="AdminDashboard.php" method="POST" class="space-y-4">
+                <div>
+                    <label for="product_id" class="block font-semibold">Product ID</label>
+                    <input type="number" name="product_id" id="product_id" class="w-full p-3 border rounded" required>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-xl font-semibold mb-2">Total Products</h2>
-                    <p class="text-2xl font-bold"><?php echo $totalProducts; ?></p>
+                <div>
+                    <label for="img_url" class="block font-semibold">Image URL</label>
+                    <input type="text" name="img_url" id="img_url" class="w-full p-3 border rounded" required>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-xl font-semibold mb-2">Recent Orders</h2>
-                    <ul class="space-y-2">
-                        <?php foreach ($recentOrders as $order): ?>
-                        <li>
-                            <span class="font-semibold">Order #<?php echo $order['id']; ?>:</span>
-                            <?php echo $order['user']; ?> -
-                            <?php echo $order['amount']; ?> -
-                            <span
-                                class="<?php echo $order['status'] === 'Completed' ? 'text-green-500' : ($order['status'] === 'Pending' ? 'text-yellow-500' : 'text-red-500'); ?>">
-                                <?php echo $order['status']; ?>
-                            </span>
-                        </li>
-                        <?php endforeach; ?>
-                    </ul>
+                <div>
+                    <label for="alt_text" class="block font-semibold">Alt Text</label>
+                    <input type="text" name="alt_text" id="alt_text" class="w-full p-3 border rounded">
                 </div>
-            </div>
-        </main>
+                <button type="submit" name="upload_image"
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Upload Image</button>
+            </form>
+        </div>
+
+        <!-- Images Section -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">Uploaded Images</h2>
+            <table class="w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-400 p-2">ID</th>
+                        <th class="border border-gray-400 p-2">Product ID</th>
+                        <th class="border border-gray-400 p-2">Image</th>
+                        <th class="border border-gray-400 p-2">Alt Text</th>
+                        <th class="border border-gray-400 p-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($image = $images->fetch_assoc()): ?>
+                    <tr>
+                        <td class="border border-gray-400 p-2"><?php echo $image['ID']; ?></td>
+                        <td class="border border-gray-400 p-2"><?php echo $image['ProductID']; ?></td>
+                        <td class="border border-gray-400 p-2">
+                            <img src="<?php echo $image['IMG_URL']; ?>" alt="<?php echo $image['AltText']; ?>"
+                                class="w-20 h-20 rounded">
+                        </td>
+                        <td class="border border-gray-400 p-2"><?php echo $image['AltText']; ?></td>
+                        <td class="border border-gray-400 p-2">
+                            <form action="delete_image.php" method="POST" class="inline">
+                                <input type="hidden" name="image_id" value="<?php echo $image['ID']; ?>">
+                                <button type="submit" class="text-red-500 hover:underline">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </body>
 
