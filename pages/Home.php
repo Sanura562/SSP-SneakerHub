@@ -39,7 +39,7 @@
 
         <!-- Banner Section -->
         <div class="mt-6">
-            <img src="https://via.placeholder.com/1200x300" alt="Adidas Banner" class="w-full rounded-lg shadow-md">
+            <img src="../src/images/adidas-banner.jpg" alt="Adidas Banner" class="w-full rounded-lg shadow-md">
         </div>
 
         <!-- Latest Arrivals -->
@@ -49,7 +49,7 @@
                 <!-- Card -->
                 <div
                     class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform">
-                    <img src="https://via.placeholder.com/150" alt="Shoe" class="w-full h-40 object-cover">
+                    <img src="../src/images/Nike Air white.webp" alt="Shoe" class="w-full h-40 object-cover">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold">Nike Air Max</h3>
                         <p class="text-gray-600">$103.97</p>
@@ -59,7 +59,7 @@
                 <!-- Repeat cards as needed -->
                 <div
                     class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform">
-                    <img src="https://via.placeholder.com/150" alt="Shoe" class="w-full h-40 object-cover">
+                    <img src="../src/images/Cream Nike.webp" alt="Shoe" class="w-full h-40 object-cover">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold">Nike Air Max</h3>
                         <p class="text-gray-600">$103.97</p>
@@ -68,7 +68,7 @@
                 </div>
                 <div
                     class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform">
-                    <img src="https://via.placeholder.com/150" alt="Shoe" class="w-full h-40 object-cover">
+                    <img src="../src/images/Jordanized Nike.png" alt="Shoe" class="w-full h-40 object-cover">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold">Nike Air Max</h3>
                         <p class="text-gray-600">$103.97</p>
@@ -77,7 +77,7 @@
                 </div>
                 <div
                     class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform">
-                    <img src="https://via.placeholder.com/150" alt="Shoe" class="w-full h-40 object-cover">
+                    <img src="../src/images/rednike.png" alt="Shoe" class="w-full h-40 object-cover">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold">Nike Air Max</h3>
                         <p class="text-gray-600">$103.97</p>
@@ -86,7 +86,7 @@
                 </div>
                 <div
                     class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition-transform">
-                    <img src="https://via.placeholder.com/150" alt="Shoe" class="w-full h-40 object-cover">
+                    <img src="../src/images/NOIKE.webp" alt="Shoe" class="w-full h-40 object-cover">
                     <div class="p-4">
                         <h3 class="text-lg font-semibold">Nike Air Max</h3>
                         <p class="text-gray-600">$103.97</p>

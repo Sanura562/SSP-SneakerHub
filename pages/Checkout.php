@@ -24,7 +24,6 @@
                 </button>
             </div>
         </div>
-
         <!-- Delivery Details -->
         <div class="space-y-4">
             <input type="email" placeholder="Email" class="w-full p-3 border rounded-lg">
