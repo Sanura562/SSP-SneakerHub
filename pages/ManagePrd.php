@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../utils/db.php'; // Database connection
+include '../utils/db.php'; // Ensure this contains correct DB connection
 
 // Ensure only admins can access this page
 if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
@@ -18,23 +18,27 @@ if ($conn->connect_error) {
 // Handle CRUD Operations
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
-    
+
     // Add Product
     if ($action === 'add') {
-        $name = htmlspecialchars($_POST['Name']);
-        $description = htmlspecialchars($_POST['Description']);
+        $name = htmlspecialchars($_POST['name']);
+        $description = htmlspecialchars($_POST['description']);
         $price = floatval($_POST['Price']);
         $stockQuantity = intval($_POST['StockQuantity']);
         $brand = htmlspecialchars($_POST['Brand']);
         $category = htmlspecialchars($_POST['Category']);
-        $discountPrice = floatval($_POST['Discount_Price']);
+        $discountPrice = isset($_POST['Discount_Price']) ? floatval($_POST['Discount_Price']) : NULL;
 
         $sql = "INSERT INTO Product (Name, Description, Price, StockQuantity, Brand, Category, Discount_Price) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssdisds", $name, $description, $price, $stockQuantity, $brand, $category, $discountPrice);
-        $stmt->execute();
-        header("Location: ManageProducts.php?success=Product added successfully.");
+        
+        if ($stmt->execute()) {
+            header("Location: ManageProducts.php?success=Product added successfully.");
+        } else {
+            header("Location: ManageProducts.php?error=Error adding product.");
+        }
         exit();
     }
 
@@ -44,50 +48,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = htmlspecialchars($_POST['name']);
         $description = htmlspecialchars($_POST['description']);
         $price = floatval($_POST['price']);
-        $stockQuantity = intval($_POST['stockQuantity']);
+        $stockQuantity = intval($_POST['StockQuantity']);
         $brand = htmlspecialchars($_POST['brand']);
         $category = htmlspecialchars($_POST['category']);
-        $discountPrice = floatval($_POST['discountPrice']);
+        $discountPrice = isset($_POST['Discount_Price']) ? floatval($_POST['discountPrice']) : NULL;
 
         $sql = "UPDATE Product 
                 SET Name = ?, Description = ?, Price = ?, StockQuantity = ?, Brand = ?, Category = ?, Discount_Price = ? 
                 WHERE ProductID = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssdisdsi", $name, $description, $price, $stockQuantity, $brand, $category, $discountPrice, $productID);
-        $stmt->execute();
-        header("Location: ManageProducts.php?success=Product updated successfully.");
+        
+        if ($stmt->execute()) {
+            header("Location: ManageProducts.php?success=Product updated successfully.");
+        } else {
+            header("Location: ManageProducts.php?error=Error updating product.");
+        }
         exit();
     }
 
     // Delete Product
     if ($action === 'delete') {
         $productID = intval($_POST['productID']);
+
+        // Delete product images first to maintain foreign key integrity
+        $conn->query("DELETE FROM Product_IMGs WHERE ProductID = $productID");
+
+        // Delete the product
         $sql = "DELETE FROM Product WHERE ProductID = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $productID);
-        $stmt->execute();
-        header("Location: ManageProducts.php?success=Product deleted successfully.");
+        
+        if ($stmt->execute()) {
+            header("Location: ManageProducts.php?success=Product deleted successfully.");
+        } else {
+            header("Location: ManageProducts.php?error=Error deleting product.");
+        }
         exit();
     }
 }
 
 // Fetch all products for display
-$products = $conn->query("SELECT * FROM Product");
+$query = "SELECT * FROM Product";
+$products = $conn->query($query);
+
+if (!$products) {
+    die("Query failed: " . $conn->error); // Debugging message
+}
 $conn->close();
 ?>
 
 
-
-
 <!DOCTYPE html>
 <html lang="en">
-
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Products</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <?php require '../utils/navbar.php'; ?>
 </head>
 
 <body class="bg-gray-100">
@@ -96,8 +116,13 @@ $conn->close();
 
         <!-- Success/Error Messages -->
         <?php if (isset($_GET['success'])): ?>
-        <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
+        <div class="bg-green-100 text-green-700 p-3 rounded mb-4 text-center">
             <?php echo htmlspecialchars($_GET['success']); ?>
+        </div>
+        <?php endif; ?>
+        <?php if (isset($_GET['error'])): ?>
+        <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+            <?php echo htmlspecialchars($_GET['error']); ?>
         </div>
         <?php endif; ?>
 
@@ -127,30 +152,34 @@ $conn->close();
             <h2 class="text-2xl font-bold mb-4">Product List</h2>
             <table class="table-auto w-full border-collapse border border-gray-300">
                 <thead>
-                    <tr>
-                        <th class="border border-gray-300 p-2">ID</th>
-                        <th class="border border-gray-300 p-2">Name</th>
-                        <th class="border border-gray-300 p-2">Price</th>
-                        <th class="border border-gray-300 p-2">Stock</th>
-                        <th class="border border-gray-300 p-2">Brand</th>
-                        <th class="border border-gray-300 p-2">Actions</th>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-400 p-2">ID</th>
+                        <th class="border border-gray-400 p-2">Name</th>
+                        <th class="border border-gray-400 p-2">Price</th>
+                        <th class="border border-gray-400 p-2">Stock</th>
+                        <th class="border border-gray-400 p-2">Brand</th>
+                        <th class="border border-gray-400 p-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($product = $products->fetch_assoc()): ?>
                     <tr>
-                        <td class="border border-gray-300 p-2"><?php echo $product['ProductID']; ?></td>
-                        <td class="border border-gray-300 p-2"><?php echo $product['Name']; ?></td>
-                        <td class="border border-gray-300 p-2"><?php echo $product['Price']; ?></td>
-                        <td class="border border-gray-300 p-2"><?php echo $product['StockQuantity']; ?></td>
-                        <td class="border border-gray-300 p-2"><?php echo $product['Brand']; ?></td>
-                        <td class="border border-gray-300 p-2">
+                        <td class="border border-gray-400 p-2"><?php echo $product['ProductID']; ?></td>
+                        <td class="border border-gray-400 p-2"><?php echo $product['Name']; ?></td>
+                        <td class="border border-gray-400 p-2">$<?php echo $product['Price']; ?></td>
+                        <td class="border border-gray-400 p-2"><?php echo $product['StockQuantity']; ?></td>
+                        <td class="border border-gray-400 p-2"><?php echo $product['Brand']; ?></td>
+                        <td class="border border-gray-400 p-2 flex space-x-2">
                             <!-- Delete Button -->
                             <form action="ManageProducts.php" method="POST" class="inline">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="productID" value="<?php echo $product['ProductID']; ?>">
-                                <button class="text-red-500 hover:underline">Delete</button>
+                                <button class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600">Delete</button>
                             </form>
+                            <!-- Update Button -->
+                            <button
+                                onclick="editProduct('<?php echo $product['ProductID']; ?>', '<?php echo $product['Name']; ?>', '<?php echo $product['Description']; ?>', '<?php echo $product['Price']; ?>', '<?php echo $product['StockQuantity']; ?>', '<?php echo $product['Brand']; ?>', '<?php echo $product['Category']; ?>', '<?php echo $product['Discount_Price']; ?>')"
+                                class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600">Edit</button>
                         </td>
                     </tr>
                     <?php endwhile; ?>
@@ -158,6 +187,21 @@ $conn->close();
             </table>
         </div>
     </div>
+
+    <!-- JavaScript for Editing Products -->
+    <script>
+    function editProduct(id, name, description, price, stock, brand, category, discount) {
+        document.querySelector('input[name="action"]').value = "update";
+        document.querySelector('input[name="productID"]').value = id;
+        document.querySelector('input[name="name"]').value = name;
+        document.querySelector('textarea[name="description"]').value = description;
+        document.querySelector('input[name="price"]').value = price;
+        document.querySelector('input[name="stockQuantity"]').value = stock;
+        document.querySelector('input[name="brand"]').value = brand;
+        document.querySelector('input[name="category"]').value = category;
+        document.querySelector('input[name="discountPrice"]').value = discount;
+    }
+    </script>
 </body>
 
 </html>
