@@ -1,6 +1,13 @@
 <?php
 session_start();
-include '../utils/db.php'; // ✅ Ensure correct database connection
+require "../../SSP/utils/db.php"; // ✅ Ensure correct database connection
+// $servername = "localhost";
+// $username = "root"; // Update with your DB username if needed
+// $password = "root"; // Update with your DB password if needed
+// $dbname = "sneaker_hub";
+
+// // Create a connection to the database
+// $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Ensure only admins can access this page
 if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
@@ -14,24 +21,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 🔹 Add Product
     if ($action === 'add') {
-        $name = htmlspecialchars($_POST['Name']);
-        $description = htmlspecialchars($_POST['Description']);
-        $price = floatval($_POST['Price']); // ✅ FIXED (Case-Sensitive)
-        $stockQuantity = intval($_POST['StockQuantity']); // ✅ FIXED (Case-Sensitive)
-        $brand = htmlspecialchars($_POST['Brand']);
-        $category = htmlspecialchars($_POST['Category']);
-        $discountPrice = isset($_POST['Discount_Price']) ? floatval($_POST['Discount_Price']) : NULL; // ✅ FIXED
+        $name = htmlspecialchars($_POST['name']);
+        $description = htmlspecialchars($_POST['description']);
+        $price = floatval($_POST['price']); 
+        $stockQuantity = intval($_POST['stockQuantity']); 
+        $brand = htmlspecialchars($_POST['brand']);
+        $category = htmlspecialchars($_POST['category']);
+        $discountPrice = isset($_POST['discountPrice']) ? floatval($_POST['discountPrice']) : NULL; // ✅ FIXED
 
         $sql = "INSERT INTO Product (Name, Description, Price, StockQuantity, Brand, Category, Discount_Price) 
                 VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+if (!$conn) {
+            die("Database connection error: \$conn is not initialized.");
+        }
+
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssdisds", $name, $description, $price, $stockQuantity, $brand, $category, $discountPrice);
+        if (!$stmt) {
+            die("SQL Preparation Error: " . $conn->error);
+        }
+
+        $stmt->bind_param("ssdissd", $name, $description, $price, $stockQuantity, $brand, $category, $discountPrice);
         
         if ($stmt->execute()) {
-            header("Location: ManageProducts.php?success=Product added successfully.");
+            header("Location: ManagePrd.php?success=Product added successfully.");
             exit();
         } else {
-            header("Location: ManageProducts.php?error=Error adding product.");
+            header("Location: ManagePrd.php?error=Error adding product.");
             exit();
         }
     }
@@ -77,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <!-- Add Product Form -->
-        <form action="ManageProducts.php" method="POST" class="space-y-4">
+        <form action="ManagePrd.php" method="POST" class="space-y-4">
             <input type="hidden" name="action" value="add">
             <input type="text" name="name" placeholder="Product Name" class="w-full p-3 border rounded" required>
             <textarea name="description" placeholder="Product Description" class="w-full p-3 border rounded"

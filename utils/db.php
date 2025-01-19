@@ -1,8 +1,7 @@
 <?php
 
 // db.php
-function dbConnect()
-{
+
     $host = 'localhost'; // Replace with your database host
     $username = 'root'; // Replace with your database username
     $password = 'root'; // Replace with your database password
@@ -16,5 +15,5 @@ function dbConnect()
         die("Connection failed: " . $conn->connect_error);
     }
 
-    return $conn;
-}
+    return $conn; 
+?>

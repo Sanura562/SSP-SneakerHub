@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../utils/db.php'; // Database connection
+require '../utils/db.php'; // Database connection
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(["error" => "Please login first."]);

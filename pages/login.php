@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../utils/db.php';
+require '../utils/db.php';
 
 // Database credentials
 $servername = "localhost";

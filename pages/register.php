@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         try {
-            $conn = dbConnect();
+            
             $sql = "INSERT INTO user (name, email, password) VALUES (?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('sss', $name, $email, $hashed_password);
