@@ -43,6 +43,7 @@ $recentOrders = [
                     <li><a href="ManagePrd.php" class="block p-4 hover:bg-blue-700">Manage Products</a></li>
                     <li><a href="ViewOrders.php" class="block p-4 hover:bg-blue-700">View Orders</a></li>
                     <li><a href="Logout.php" class="block p-4 hover:bg-blue-700">Logout</a></li>
+                    <li><a href="../pages/delete.php" class="block p-4 hover:bg-blue-700">Delete Products</a></li>
                 </ul>
             </nav>
         </aside>
