@@ -20,9 +20,6 @@ if (!$products) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['productID'])) {
     $productID = intval($_POST['productID']);
 
-    // Delete product images first (if you have an image table)
-    $conn->query("DELETE FROM Product_IMGs WHERE ProductID = $productID");
-
     // Delete product from the database
     $sql = "DELETE FROM Product WHERE ProductID = ?";
     $stmt = $conn->prepare($sql);

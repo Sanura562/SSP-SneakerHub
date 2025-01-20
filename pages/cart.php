@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../utils/db.php'; // Ensure database connection
+require '../utils/db.php'; // Ensure database connection
 
 
 // Ensure user is logged in
